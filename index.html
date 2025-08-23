@@ -33,14 +33,26 @@
         button:active {
             transform: scale(0.98);
         }
+        
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
     </style>
 </head>
 <body>
-    <button onclick="sayHello()">Hello</button>
+    <div class="button-container">
+        <button onclick="sayHello()">Hello</button>
+        <button onclick="sayGoodBye()">Good bye</button>
+    </div>
     
     <script>
         function sayHello() {
             alert('Hello, World!');
+        }
+        
+        function sayGoodBye() {
+            alert('Good bye!');
         }
     </script>
 </body>
