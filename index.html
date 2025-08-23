@@ -56,10 +56,52 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     
     <script>
-        function sayHello() {
-            // Using Bootstrap toast instead of alert
-            const toast = new bootstrap.Toast(document.getElementById('helloToast'));
-            toast.show();
+        async function sayHello() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            try {
+                // Show loading state
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...';
+                button.disabled = true;
+                
+                // Make API call to trigger webhook
+                const response = await fetch('/api/trigger-webhook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'hello',
+                        userAgent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success toast
+                    const toast = new bootstrap.Toast(document.getElementById('helloToast'));
+                    document.getElementById('helloToast').querySelector('.toast-body').innerHTML = 
+                        `Webhook triggered successfully! <br><small class="text-muted">Response: ${JSON.stringify(result.data)}</small>`;
+                    toast.show();
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Show error toast
+                const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                document.getElementById('errorToast').querySelector('.toast-body').innerHTML = 
+                    `Failed to trigger webhook: ${error.message}`;
+                toast.show();
+            } finally {
+                // Restore button state
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
         }
         
         function sayGoodBye() {
@@ -90,6 +132,17 @@
             </div>
             <div class="toast-body">
                 Good bye! 👋
+            </div>
+        </div>
+        
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Error!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                An error occurred.
             </div>
         </div>
     </div>
