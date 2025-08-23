@@ -39,6 +39,22 @@
                             <button class="btn btn-primary btn-lg" onclick="sayHello()">
                                 <i class="bi bi-hand-wave"></i> Hello
                             </button>
+                            
+                            <!-- Debug section -->
+                            <div class="mt-4 p-3 bg-light rounded">
+                                <h6 class="text-muted mb-3">Debug Webhook Formats</h6>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="testWebhook('simple')">
+                                        Test Simple
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="testWebhook('json')">
+                                        Test JSON
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="testWebhook('minimal')">
+                                        Test Minimal
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,9 +115,50 @@
                 button.innerHTML = originalText;
                 button.disabled = false;
             }
-        }
+                }
         
-
+        async function testWebhook(format) {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            try {
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Testing...';
+                button.disabled = true;
+                
+                const response = await fetch('/api/test-webhook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ format: format })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const toast = new bootstrap.Toast(document.getElementById('helloToast'));
+                    document.getElementById('helloToast').querySelector('.toast-body').innerHTML = 
+                        `Format "${format}" worked! <br><small class="text-muted">Response: ${JSON.stringify(result.response)}</small>`;
+                    toast.show();
+                } else {
+                    const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    document.getElementById('errorToast').querySelector('.toast-body').innerHTML = 
+                        `Format "${format}" failed: ${result.error}<br><small class="text-muted">Details: ${JSON.stringify(result.details)}</small>`;
+                    toast.show();
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                document.getElementById('errorToast').querySelector('.toast-body').innerHTML = 
+                    `Test failed: ${error.message}`;
+                toast.show();
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+ 
     </script>
     
     <!-- Toast notifications -->
