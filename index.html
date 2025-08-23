@@ -39,9 +39,6 @@
                             <button class="btn btn-primary btn-lg" onclick="sayHello()">
                                 <i class="bi bi-hand-wave"></i> Hello
                             </button>
-                            <button class="btn btn-secondary btn-lg" onclick="sayGoodBye()">
-                                <i class="bi bi-hand"></i> Good bye
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -104,11 +101,7 @@
             }
         }
         
-        function sayGoodBye() {
-            // Using Bootstrap toast instead of alert
-            const toast = new bootstrap.Toast(document.getElementById('goodbyeToast'));
-            toast.show();
-        }
+
     </script>
     
     <!-- Toast notifications -->
@@ -124,16 +117,7 @@
             </div>
         </div>
         
-        <div id="goodbyeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-secondary text-white">
-                <i class="bi bi-hand me-2"></i>
-                <strong class="me-auto">Goodbye!</strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                Good bye! 👋
-            </div>
-        </div>
+
         
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-danger text-white">
