@@ -4,56 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello Button</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            justify-content: center;
         }
         
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #0056b3;
-        }
-        
-        button:active {
-            transform: scale(0.98);
-        }
-        
-        .button-container {
-            display: flex;
-            gap: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <div class="button-container">
-        <button onclick="sayHello()">Hello</button>
-        <button onclick="sayGoodBye()">Good bye</button>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4">
+                    <div class="card-body text-center">
+                        <h2 class="card-title mb-4 text-primary">Button Demo</h2>
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-primary btn-lg" onclick="sayHello()">
+                                <i class="bi bi-hand-wave"></i> Hello
+                            </button>
+                            <button class="btn btn-secondary btn-lg" onclick="sayGoodBye()">
+                                <i class="bi bi-hand"></i> Good bye
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     
     <script>
         function sayHello() {
-            alert('Hello, World!');
+            // Using Bootstrap toast instead of alert
+            const toast = new bootstrap.Toast(document.getElementById('helloToast'));
+            toast.show();
         }
         
         function sayGoodBye() {
-            alert('Good bye!');
+            // Using Bootstrap toast instead of alert
+            const toast = new bootstrap.Toast(document.getElementById('goodbyeToast'));
+            toast.show();
         }
     </script>
+    
+    <!-- Toast notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="helloToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-primary text-white">
+                <i class="bi bi-hand-wave me-2"></i>
+                <strong class="me-auto">Hello!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Hello, World! 👋
+            </div>
+        </div>
+        
+        <div id="goodbyeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-secondary text-white">
+                <i class="bi bi-hand me-2"></i>
+                <strong class="me-auto">Goodbye!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Good bye! 👋
+            </div>
+        </div>
+    </div>
 </body>
 </html>
