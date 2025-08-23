@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static('.'));
 
 // N8N webhook URL
-const N8N_WEBHOOK_URL = 'https://n8n.bn-prototypes.de/webhook-test/c3d7da87-c791-4dd0-963f-97c67884fa2a';
+const N8N_WEBHOOK_URL = 'https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f';
 
 // Proxy endpoint for n8n webhook
 app.post('/api/trigger-webhook', async (req, res) => {
