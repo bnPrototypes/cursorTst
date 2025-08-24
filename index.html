@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <button onclick="fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f',{method:'POST'})">
-      Trigger Workflow
-    </button>
+    <button onclick="call()">Trigger Workflow</button>
+    <div id="msg"></div>
+    <script>
+      async function call() {
+        try {
+          let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
+          document.getElementById('msg').innerText = r.ok ? 'Success!' : 'Error: ' + r.status + ' ' + r.statusText;
+        } catch(e) {
+          document.getElementById('msg').innerText = 'Failed: ' + e.message;
+        }
+      }
+    </script>
   </body>
 </html>
