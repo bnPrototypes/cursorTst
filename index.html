@@ -7,33 +7,30 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
         
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
+            text-align: center;
             padding: 20px;
+            background: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
         }
         
         button {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 4px;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
         
         button:hover {
@@ -45,24 +42,12 @@
             cursor: not-allowed;
         }
         
-        .debug-section {
+        #result {
             margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-        
-        .debug-section h3 {
-            margin-top: 0;
-            color: #666;
-        }
-        
-        .result {
-            margin-top: 10px;
             padding: 10px;
-            border-radius: 4px;
+            border-radius: 5px;
             font-family: monospace;
-            font-size: 14px;
+            display: none;
         }
         
         .success {
@@ -81,43 +66,29 @@
 <body>
     <div class="container">
         <h1>N8N Webhook Test</h1>
-        
-        <!-- Main Hello Button -->
-        <div style="text-align: center;">
-            <button onclick="sayHello()" id="helloButton">Hello</button>
-        </div>
-        
-        <!-- Debug Section -->
-        <div class="debug-section">
-            <h3>Debug Webhook Formats</h3>
-            <button onclick="testWebhook('simple')">Test Simple</button>
-            <button onclick="testWebhook('json')">Test JSON</button>
-            <button onclick="testWebhook('minimal')">Test Minimal</button>
-        </div>
-        
-        <!-- Results Display -->
-        <div id="result" class="result" style="display: none;"></div>
+        <button onclick="callWebhook()" id="webhookButton">Call N8N Webhook</button>
+        <div id="result"></div>
     </div>
-    
+
     <script>
-        async function sayHello() {
-            const button = document.getElementById('helloButton');
-            const originalText = button.innerHTML;
+        async function callWebhook() {
+            const button = document.getElementById('webhookButton');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            button.innerHTML = 'Calling...';
+            button.disabled = true;
+            resultDiv.style.display = 'none';
             
             try {
-                // Show loading state
-                button.innerHTML = 'Sending...';
-                button.disabled = true;
-                
-                // Make API call to trigger webhook
+                // Call the webhook through our server
                 const response = await fetch('/api/trigger-webhook', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        action: 'hello',
-                        userAgent: navigator.userAgent,
+                        message: 'Hello from web interface!',
                         timestamp: new Date().toISOString()
                     })
                 });
@@ -125,50 +96,17 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showResult('Webhook triggered successfully! Response: ' + JSON.stringify(result.data), 'success');
+                    showResult('Webhook called successfully! Response: ' + JSON.stringify(result.data), 'success');
                 } else {
-                    throw new Error(result.message);
+                    showResult('Error: ' + result.message, 'error');
                 }
                 
             } catch (error) {
                 console.error('Error:', error);
-                showResult('Failed to trigger webhook: ' + error.message, 'error');
+                showResult('Failed to call webhook: ' + error.message, 'error');
             } finally {
                 // Restore button state
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }
-        }
-        
-        async function testWebhook(format) {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            
-            try {
-                button.innerHTML = 'Testing...';
-                button.disabled = true;
-                
-                const response = await fetch('/api/test-webhook', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ format: format })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult(`Format "${format}" worked! Response: ${JSON.stringify(result.response)}`, 'success');
-                } else {
-                    showResult(`Format "${format}" failed: ${result.error}. Details: ${JSON.stringify(result.details)}`, 'error');
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showResult('Test failed: ' + error.message, 'error');
-            } finally {
-                button.innerHTML = originalText;
+                button.innerHTML = 'Call N8N Webhook';
                 button.disabled = false;
             }
         }
@@ -176,7 +114,7 @@
         function showResult(message, type) {
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = message;
-            resultDiv.className = 'result ' + type;
+            resultDiv.className = type;
             resultDiv.style.display = 'block';
         }
     </script>
