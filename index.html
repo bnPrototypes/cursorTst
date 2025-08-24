@@ -65,7 +65,7 @@
                 
                 const msgDiv = document.getElementById('msg');
                 if (r.ok) {
-                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Success!</div>';
+                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Success!<br><small class="text-muted">Workflow: /webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f</small></div>';
                 } else {
                     msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Error: ' + r.status + ' ' + r.statusText + '</div>';
                 }
