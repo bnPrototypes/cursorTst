@@ -24,8 +24,8 @@
             resultDiv.style.display = 'none';
             
             try {
-                // Call the webhook through our server (to avoid CORS issues)
-                const response = await fetch('/api/trigger-webhook', {
+                // Direkt den n8n Webhook aufrufen
+                const response = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -38,10 +38,10 @@
                 
                 const result = await response.json();
                 
-                if (result.success) {
-                    showResult('Webhook called successfully! Response: ' + JSON.stringify(result.data), 'success');
+                if (response.ok) {
+                    showResult('Webhook called successfully! Response: ' + JSON.stringify(result), 'success');
                 } else {
-                    showResult('Error: ' + result.message, 'error');
+                    showResult('Error: ' + JSON.stringify(result), 'error');
                 }
                 
             } catch (error) {
