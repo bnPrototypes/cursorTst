@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <button onclick="call()">Trigger Workflow</button>
+    <div id="msg"></div>
+    <select id="dropdown"></select>
+
+    <script>
+      async function call() {
+        const msg = document.getElementById('msg');
+        const dropdown = document.getElementById('dropdown');
+        dropdown.innerHTML = ""; // leeren
+
+        try {
+          let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
+          let data = await r.json();
+
+          msg.innerText = "Antwort von n8n erhalten";
+
+          // JSON-Werte in Dropdown packen
+          Object.entries(data).forEach(([key, value]) => {
+            let opt = document.createElement("option");
+            opt.value = value;
+            opt.text = key + ": " + value;
+            dropdown.appendChild(opt);
+          });
+        } catch(e) {
+          msg.innerText = "Fehler: " + e.message;
+        }
+      }
+    </script>
+  </body>
+</html>
