@@ -59,6 +59,13 @@
                                 </table>
                             </div>
                         </div>
+                        <div id="dropdown-container" class="mt-3" style="display: none;">
+                            <h5 class="text-primary">Response Data (Dropdown):</h5>
+                            <div class="mb-3">
+                                <label for="response-dropdown" class="form-label">Select Response Data:</label>
+                                <select id="response-dropdown" class="form-select" size="8"></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,6 +91,8 @@
                 // Hide table and clear previous data
                 document.getElementById('table-container').style.display = 'none';
                 document.getElementById('table-body').innerHTML = '';
+                document.getElementById('dropdown-container').style.display = 'none';
+                document.getElementById('response-dropdown').innerHTML = '';
                 
                 // Hide the button and title
                 button.style.display = 'none';
@@ -92,22 +101,31 @@
                 let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
                 
                 if (r.ok) {
-                    // Parse and display response data in table
+                    // Parse and display response data in table and dropdown
                     try {
                         const data = await r.json();
                         const tableBody = document.getElementById('table-body');
+                        const dropdown = document.getElementById('response-dropdown');
                         
                         Object.entries(data).forEach(([key, value]) => {
+                            // Add to table
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td><strong>${key}</strong></td>
                                 <td>${typeof value === 'object' ? JSON.stringify(value) : value}</td>
                             `;
                             tableBody.appendChild(row);
+                            
+                            // Add to dropdown
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.text = key + ': ' + (typeof value === 'object' ? JSON.stringify(value) : value);
+                            dropdown.appendChild(option);
                         });
                         
-                        // Show table
+                        // Show both table and dropdown
                         document.getElementById('table-container').style.display = 'block';
+                        document.getElementById('dropdown-container').style.display = 'block';
                     } catch (jsonError) {
                         console.log('No JSON response data to display');
                     }
