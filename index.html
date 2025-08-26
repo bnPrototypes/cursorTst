@@ -9,7 +9,7 @@
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #808080;
         }
         
         .container {
@@ -34,7 +34,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card p-4">
                     <div class="card-body text-center">
-                        <h2 class="card-title mb-4 text-primary">N8N Webhook Test</h2>
+                        <h2 class="card-title mb-4 text-primary" id="title">N8N Webhook Test</h2>
                         <button class="btn btn-primary btn-lg" onclick="call()">
                             <i class="bi bi-play-circle me-2"></i>Trigger Workflow
                         </button>
@@ -80,15 +80,13 @@
                 document.getElementById('table-container').style.display = 'none';
                 document.getElementById('table-body').innerHTML = '';
                 
-                // Hide the button
+                // Hide the button and title
                 button.style.display = 'none';
+                document.getElementById('title').style.display = 'none';
                 
                 let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
                 
-                const msgDiv = document.getElementById('msg');
                 if (r.ok) {
-                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Success!<br><small class="text-muted">Workflow: /webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f</small></div>';
-                    
                     // Parse and display response data in table
                     try {
                         const data = await r.json();
@@ -109,6 +107,7 @@
                         console.log('No JSON response data to display');
                     }
                 } else {
+                    const msgDiv = document.getElementById('msg');
                     msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Error: ' + r.status + ' ' + r.statusText + '</div>';
                 }
             } catch(e) {
