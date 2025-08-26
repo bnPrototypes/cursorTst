@@ -80,6 +80,9 @@
                 document.getElementById('table-container').style.display = 'none';
                 document.getElementById('table-body').innerHTML = '';
                 
+                // Hide the button
+                button.style.display = 'none';
+                
                 let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
                 
                 const msgDiv = document.getElementById('msg');
@@ -112,9 +115,9 @@
                 const msgDiv = document.getElementById('msg');
                 msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Failed: ' + e.message + '</div>';
             } finally {
-                // Restore button state
-                button.innerHTML = originalText;
-                button.disabled = false;
+                // Don't restore button state - keep it hidden
+                // button.innerHTML = originalText;
+                // button.disabled = false;
             }
         }
     </script>
