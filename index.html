@@ -142,6 +142,7 @@
                             // Set the resume link with selected data
                             const resumeLink = document.getElementById('resume-link');
                             const selectedData = getSelectedDropdownData();
+                            console.log('Selected data to send:', selectedData);
                             resumeLink.href = 'resume.html?url=' + encodeURIComponent(data.resumeURL) + 
                                              '&data=' + encodeURIComponent(JSON.stringify(selectedData));
                         } else if (data.$execution && data.$execution.resumeUrl) {
@@ -184,6 +185,14 @@
                 return {
                     key: selectedOption.text.split(':')[0],
                     value: selectedOption.value
+                };
+            }
+            // If no option is selected, return the first option
+            if (dropdown.options.length > 0) {
+                const firstOption = dropdown.options[0];
+                return {
+                    key: firstOption.text.split(':')[0],
+                    value: firstOption.value
                 };
             }
             return null;

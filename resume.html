@@ -10,23 +10,15 @@
     <div class="container">
         <h1>Resume Workflow</h1>
         <div id="url-display"></div>
-        <div class="controls">
-            <label for="method">HTTP Method:</label>
-            <select id="method">
-                <option value="GET">GET</option>
-                <option value="POST">POST</option>
-            </select>
-        </div>
         <button id="resume-btn" onclick="resumeWorkflow()">Senden</button>
         <div id="sending"></div>
         <div id="result"></div>
     </div>
 
     <script>
-        // Get resume URL, method, and data from URL parameters
+        // Get resume URL and data from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const resumeUrl = urlParams.get('url');
-        const methodParam = (urlParams.get('method') || 'GET').toUpperCase();
         const selectedData = urlParams.get('data');
 
         // Display the resume URL and selected data
@@ -36,10 +28,6 @@
             dataDisplay.id = 'data-display';
             dataDisplay.textContent = 'Selected Data: ' + selectedData;
             document.getElementById('url-display').after(dataDisplay);
-        }
-        const methodSelect = document.getElementById('method');
-        if (methodParam === 'GET' || methodParam === 'POST') {
-            methodSelect.value = methodParam;
         }
 
         function showSendingDetails(method, url, data) {
@@ -52,7 +40,7 @@
             const button = document.getElementById('resume-btn');
             const resultDiv = document.getElementById('result');
             const sendingDiv = document.getElementById('sending');
-            const method = document.getElementById('method').value;
+            const method = 'POST'; // Always use POST
 
             resultDiv.innerHTML = '';
             sendingDiv.innerHTML = '';
@@ -80,10 +68,10 @@
                 showSendingDetails(method, resumeUrl, dataToSend);
                 console.log('Sending', method, 'to:', resumeUrl, 'with data:', dataToSend);
 
-                const requestOptions = { method };
-                if (method === 'POST' && dataToSend) {
-                    requestOptions.body = JSON.stringify(dataToSend);
-                }
+                const requestOptions = { 
+                    method: 'POST',
+                    body: dataToSend ? JSON.stringify(dataToSend) : '{}'
+                };
 
                 const response = await fetch(resumeUrl, requestOptions);
 
