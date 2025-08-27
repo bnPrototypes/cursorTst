@@ -206,35 +206,63 @@
 
                 
                 // Try different methods to resume the workflow
-                console.log('Sending resume request to:', resumeUrl);
+                console.log('=== RESUME REQUEST DETAILS ===');
+                console.log('Resume URL:', resumeUrl);
+                console.log('Original stored URL:', window.storedResumeUrl);
                 
-                // Try GET first (n8n often uses GET for resume)
-                let response = await fetch(resumeUrl, {
-                    method: 'GET'
-                });
+                // Try with different payloads and methods
+                const testPayloads = [
+                    { method: 'GET', body: null, description: 'GET with no body' },
+                    { method: 'POST', body: null, description: 'POST with no body' },
+                    { method: 'POST', body: JSON.stringify({}), description: 'POST with empty JSON' },
+                    { method: 'POST', body: JSON.stringify({ action: 'resume' }), description: 'POST with action' },
+                    { method: 'POST', body: JSON.stringify({ resume: true }), description: 'POST with resume flag' }
+                ];
                 
-                // If GET fails, try POST
-                if (!response.ok) {
-                    console.log('GET failed, trying POST...');
-                    response = await fetch(resumeUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
+                let response = null;
+                let successfulMethod = null;
+                
+                for (const test of testPayloads) {
+                    console.log(`\n--- Trying ${test.description} ---`);
+                    console.log('Method:', test.method);
+                    console.log('Body:', test.body);
+                    
+                    try {
+                        const requestOptions = {
+                            method: test.method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        };
+                        
+                        if (test.body) {
+                            requestOptions.body = test.body;
                         }
-                    });
+                        
+                        response = await fetch(resumeUrl, requestOptions);
+                        console.log('Response status:', response.status);
+                        console.log('Response statusText:', response.statusText);
+                        
+                        if (response.ok) {
+                            successfulMethod = test.description;
+                            console.log('SUCCESS with:', test.description);
+                            break;
+                        }
+                    } catch (error) {
+                        console.log('Error with', test.description, ':', error.message);
+                    }
                 }
                 
-                if (response.ok) {
+                if (response && response.ok) {
                     // Show success message
                     const msgDiv = document.getElementById('msg');
-                    const method = response.url === resumeUrl ? 'GET' : 'POST';
-                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Workflow resumed successfully! (Method: ' + method + ')</div>';
+                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Workflow resumed successfully! (Method: ' + successfulMethod + ')</div>';
                     msgDiv.style.display = 'block';
                     
                     // Hide resume button after successful resume
                     document.getElementById('resume-container').style.display = 'none';
                 } else {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText} (Tried GET and POST)`);
+                    throw new Error(`All methods failed. Last response: HTTP ${response ? response.status : 'No response'} (Tried 5 different approaches)`);
                 }
                 
             } catch (error) {
