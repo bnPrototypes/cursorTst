@@ -17,27 +17,35 @@
                 <option value="POST">POST</option>
             </select>
         </div>
-        <button id="resume-btn" onclick="resumeWorkflow()">Resume Workflow</button>
+        <button id="resume-btn" onclick="resumeWorkflow()">Senden</button>
         <div id="sending"></div>
         <div id="result"></div>
     </div>
 
     <script>
-        // Get resume URL and optional method from URL parameters
+        // Get resume URL, method, and data from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const resumeUrl = urlParams.get('url');
         const methodParam = (urlParams.get('method') || 'GET').toUpperCase();
+        const selectedData = urlParams.get('data');
 
-        // Display the resume URL and initialize method selector
+        // Display the resume URL and selected data
         document.getElementById('url-display').textContent = 'Resume URL: ' + (resumeUrl || '(missing)');
+        if (selectedData) {
+            const dataDisplay = document.createElement('div');
+            dataDisplay.id = 'data-display';
+            dataDisplay.textContent = 'Selected Data: ' + selectedData;
+            document.getElementById('url-display').after(dataDisplay);
+        }
         const methodSelect = document.getElementById('method');
         if (methodParam === 'GET' || methodParam === 'POST') {
             methodSelect.value = methodParam;
         }
 
-        function showSendingDetails(method, url) {
+        function showSendingDetails(method, url, data) {
             const sendingDiv = document.getElementById('sending');
-            sendingDiv.innerHTML = '<div class="info">Sending ' + method + ' to: ' + url + '<br>Headers: (none)<br>Body: (none)</div>';
+            const bodyText = data ? JSON.stringify(data) : '(none)';
+            sendingDiv.innerHTML = '<div class="info">Sending ' + method + ' to: ' + url + '<br>Headers: (none)<br>Body: ' + bodyText + '</div>';
         }
 
         async function resumeWorkflow() {
@@ -55,20 +63,35 @@
             }
 
             try {
-                button.textContent = 'Resuming...';
+                button.textContent = 'Sending...';
                 button.disabled = true;
 
-                // IMPORTANT: Do not set any headers or body → avoid CORS preflight
-                showSendingDetails(method, resumeUrl);
-                console.log('Sending', method, 'to:', resumeUrl);
+                // Parse selected data if available
+                let dataToSend = null;
+                if (selectedData) {
+                    try {
+                        dataToSend = JSON.parse(selectedData);
+                    } catch (e) {
+                        console.error('Error parsing selected data:', e);
+                    }
+                }
 
-                const response = await fetch(resumeUrl, { method });
+                // IMPORTANT: Do not set any headers or body → avoid CORS preflight
+                showSendingDetails(method, resumeUrl, dataToSend);
+                console.log('Sending', method, 'to:', resumeUrl, 'with data:', dataToSend);
+
+                const requestOptions = { method };
+                if (method === 'POST' && dataToSend) {
+                    requestOptions.body = JSON.stringify(dataToSend);
+                }
+
+                const response = await fetch(resumeUrl, requestOptions);
 
                 console.log('Response status:', response.status);
                 console.log('Response statusText:', response.statusText);
 
                 if (response.ok) {
-                    resultDiv.innerHTML = '<div class="success">Workflow resumed successfully.</div>';
+                    resultDiv.innerHTML = '<div class="success">Data sent successfully.</div>';
                 } else {
                     resultDiv.innerHTML = '<div class="error">Failed: ' + response.status + ' ' + response.statusText + '</div>';
                 }
@@ -77,7 +100,7 @@
                 console.error('Error:', error);
                 resultDiv.innerHTML = '<div class="error">Error: ' + error.message + '</div>';
             } finally {
-                button.textContent = 'Resume Workflow';
+                button.textContent = 'Senden';
                 button.disabled = false;
             }
         }
