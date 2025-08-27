@@ -38,11 +38,7 @@
                         <button class="btn btn-primary btn-lg" onclick="call()">
                             <i class="bi bi-play-circle me-2"></i>Trigger Workflow
                         </button>
-                        <div class="mt-3">
-                            <button class="btn btn-outline-secondary" onclick="window.location.href='index2.html'">
-                                <i class="bi bi-arrow-right me-2"></i>Switch to Index 2
-                            </button>
-                        </div>
+
                         <div id="msg" class="mt-3"></div>
                         <div id="table-container" class="mt-3" style="display: none;">
                             <h5 class="text-primary">Response Data:</h5>
@@ -74,11 +70,7 @@
                                 <small class="text-muted">Resume URL: <span id="resume-url-display"></span></small>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <button class="btn btn-warning btn-sm" onclick="showResumeButton()">
-                                <i class="bi bi-eye me-2"></i>Show Resume Button (Debug)
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -213,25 +205,36 @@
                 
 
                 
-                // Make POST request to resume the workflow
+                // Try different methods to resume the workflow
                 console.log('Sending resume request to:', resumeUrl);
-                const response = await fetch(resumeUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                
+                // Try GET first (n8n often uses GET for resume)
+                let response = await fetch(resumeUrl, {
+                    method: 'GET'
                 });
+                
+                // If GET fails, try POST
+                if (!response.ok) {
+                    console.log('GET failed, trying POST...');
+                    response = await fetch(resumeUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                }
                 
                 if (response.ok) {
                     // Show success message
                     const msgDiv = document.getElementById('msg');
-                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Workflow resumed successfully!</div>';
+                    const method = response.url === resumeUrl ? 'GET' : 'POST';
+                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Workflow resumed successfully! (Method: ' + method + ')</div>';
                     msgDiv.style.display = 'block';
                     
                     // Hide resume button after successful resume
                     document.getElementById('resume-container').style.display = 'none';
                 } else {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText} (Tried GET and POST)`);
                 }
                 
             } catch (error) {
@@ -246,10 +249,7 @@
             }
         }
         
-        function showResumeButton() {
-            document.getElementById('resume-container').style.display = 'block';
-            console.log('Resume button manually shown');
-        }
+
     </script>
 </body>
 </html>
