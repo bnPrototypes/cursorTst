@@ -130,6 +130,10 @@
                         document.getElementById('table-container').style.display = 'block';
                         document.getElementById('dropdown-container').style.display = 'block';
                         
+                        // Add event listener to dropdown to update resume link when selection changes
+                        const dropdown = document.getElementById('response-dropdown');
+                        dropdown.addEventListener('change', updateResumeLink);
+                        
                         // Check if resumeUrl exists and show resume button
                         console.log('Response data:', data);
                         
@@ -139,12 +143,8 @@
                             // Store the resume URL for later use
                             window.storedResumeUrl = data.resumeURL;
                             document.getElementById('resume-container').style.display = 'block';
-                            // Set the resume link with selected data
-                            const resumeLink = document.getElementById('resume-link');
-                            const selectedData = getSelectedDropdownData();
-                            console.log('Selected data to send:', selectedData);
-                            resumeLink.href = 'resume.html?url=' + encodeURIComponent(data.resumeURL) + 
-                                             '&data=' + encodeURIComponent(JSON.stringify(selectedData));
+                            // Set up dynamic resume link that updates when dropdown selection changes
+                            updateResumeLink();
                         } else if (data.$execution && data.$execution.resumeUrl) {
                             console.log('Found resumeUrl:', data.$execution.resumeUrl);
                             document.getElementById('resume-container').style.display = 'block';
@@ -196,6 +196,16 @@
                 };
             }
             return null;
+        }
+        
+        function updateResumeLink() {
+            if (window.storedResumeUrl) {
+                const resumeLink = document.getElementById('resume-link');
+                const selectedData = getSelectedDropdownData();
+                console.log('Updating resume link with selected data:', selectedData);
+                resumeLink.href = 'resume.html?url=' + encodeURIComponent(window.storedResumeUrl) + 
+                                 '&data=' + encodeURIComponent(JSON.stringify(selectedData));
+            }
         }
         
 
