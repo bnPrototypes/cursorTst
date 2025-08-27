@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Workflow</title>
+    <link rel="stylesheet" href="resume.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Workflow</h1>
+        <div id="url-display"></div>
+        <button id="resume-btn" onclick="resumeWorkflow()">Resume Workflow</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Get resume URL from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const resumeUrl = urlParams.get('url');
+        
+        // Display the resume URL
+        document.getElementById('url-display').textContent = 'Resume URL: ' + resumeUrl;
+        
+        async function resumeWorkflow() {
+            const button = document.getElementById('resume-btn');
+            const resultDiv = document.getElementById('result');
+            
+            if (!resumeUrl) {
+                resultDiv.innerHTML = '<div class="error">No resume URL provided</div>';
+                return;
+            }
+            
+            try {
+                button.textContent = 'Resuming...';
+                button.disabled = true;
+                
+                console.log('Sending POST to:', resumeUrl);
+                
+                const response = await fetch(resumeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response statusText:', response.statusText);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="success">Workflow resumed successfully!</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="error">Failed to resume workflow: ' + response.status + ' ' + response.statusText + '</div>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = '<div class="error">Error: ' + error.message + '</div>';
+            } finally {
+                button.textContent = 'Resume Workflow';
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

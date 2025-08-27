@@ -63,12 +63,9 @@
                             </div>
                         </div>
                         <div id="resume-container" class="mt-3" style="display: none;">
-                            <button class="btn btn-success btn-lg" onclick="resumeWorkflow()">
+                            <a href="#" id="resume-link" class="btn btn-success btn-lg">
                                 <i class="bi bi-play-fill me-2"></i>Resume Workflow
-                            </button>
-                            <div class="mt-2">
-                                <small class="text-muted">Resume URL: <span id="resume-url-display"></span></small>
-                            </div>
+                            </a>
                         </div>
 
                     </div>
@@ -142,8 +139,9 @@
                             // Store the resume URL for later use
                             window.storedResumeUrl = data.resumeURL;
                             document.getElementById('resume-container').style.display = 'block';
-                            // Display the resume URL
-                            document.getElementById('resume-url-display').textContent = data.resumeURL;
+                            // Set the resume link
+                            const resumeLink = document.getElementById('resume-link');
+                            resumeLink.href = 'resume.html?url=' + encodeURIComponent(data.resumeURL);
                         } else if (data.$execution && data.$execution.resumeUrl) {
                             console.log('Found resumeUrl:', data.$execution.resumeUrl);
                             document.getElementById('resume-container').style.display = 'block';
@@ -177,105 +175,7 @@
             }
         }
         
-        async function resumeWorkflow() {
-            const resumeButton = event.target;
-            const originalText = resumeButton.innerHTML;
-            
-            try {
-                // Show loading state
-                resumeButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Resuming...';
-                resumeButton.disabled = true;
-                
-                // Get the resumeUrl from stored data
-                let resumeUrl = window.storedResumeUrl;
-                
-                if (!resumeUrl) {
-                    throw new Error('Resume URL not found. Please trigger the workflow first.');
-                }
-                
-                // Handle n8n template format: "{{$execution.resumeUrl}}"
-                if (resumeUrl.includes('{{$execution.resumeUrl}}')) {
-                    // Extract the actual URL from the n8n template
-                    // For now, we'll construct the URL based on the webhook URL pattern
-                    const webhookUrl = 'https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f';
-                    const baseUrl = webhookUrl.replace('/webhook-test/', '/webhook-resume/');
-                    resumeUrl = baseUrl;
-                    console.log('Converted resume URL:', resumeUrl);
-                }
-                
 
-                
-                // Try different methods to resume the workflow
-                console.log('=== RESUME REQUEST DETAILS ===');
-                console.log('Resume URL:', resumeUrl);
-                console.log('Original stored URL:', window.storedResumeUrl);
-                
-                // Try with different payloads and methods
-                const testPayloads = [
-                    { method: 'GET', body: null, description: 'GET with no body' },
-                    { method: 'POST', body: null, description: 'POST with no body' },
-                    { method: 'POST', body: JSON.stringify({}), description: 'POST with empty JSON' },
-                    { method: 'POST', body: JSON.stringify({ action: 'resume' }), description: 'POST with action' },
-                    { method: 'POST', body: JSON.stringify({ resume: true }), description: 'POST with resume flag' }
-                ];
-                
-                let response = null;
-                let successfulMethod = null;
-                
-                for (const test of testPayloads) {
-                    console.log(`\n--- Trying ${test.description} ---`);
-                    console.log('Method:', test.method);
-                    console.log('Body:', test.body);
-                    
-                    try {
-                        const requestOptions = {
-                            method: test.method,
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        };
-                        
-                        if (test.body) {
-                            requestOptions.body = test.body;
-                        }
-                        
-                        response = await fetch(resumeUrl, requestOptions);
-                        console.log('Response status:', response.status);
-                        console.log('Response statusText:', response.statusText);
-                        
-                        if (response.ok) {
-                            successfulMethod = test.description;
-                            console.log('SUCCESS with:', test.description);
-                            break;
-                        }
-                    } catch (error) {
-                        console.log('Error with', test.description, ':', error.message);
-                    }
-                }
-                
-                if (response && response.ok) {
-                    // Show success message
-                    const msgDiv = document.getElementById('msg');
-                    msgDiv.innerHTML = '<div class="alert alert-success" role="alert"><i class="bi bi-check-circle me-2"></i>Workflow resumed successfully! (Method: ' + successfulMethod + ')</div>';
-                    msgDiv.style.display = 'block';
-                    
-                    // Hide resume button after successful resume
-                    document.getElementById('resume-container').style.display = 'none';
-                } else {
-                    throw new Error(`All methods failed. Last response: HTTP ${response ? response.status : 'No response'} (Tried 5 different approaches)`);
-                }
-                
-            } catch (error) {
-                console.error('Resume error:', error);
-                const msgDiv = document.getElementById('msg');
-                msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Failed to resume workflow: ' + error.message + '<br><small class="text-muted">Resume URL: ' + resumeUrl + '</small></div>';
-                msgDiv.style.display = 'block';
-            } finally {
-                // Restore button state
-                resumeButton.innerHTML = originalText;
-                resumeButton.disabled = false;
-            }
-        }
         
 
     </script>
