@@ -10,49 +10,69 @@
     <div class="container">
         <h1>Resume Workflow</h1>
         <div id="url-display"></div>
+        <div class="controls">
+            <label for="method">HTTP Method:</label>
+            <select id="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
+        </div>
         <button id="resume-btn" onclick="resumeWorkflow()">Resume Workflow</button>
+        <div id="sending"></div>
         <div id="result"></div>
     </div>
 
     <script>
-        // Get resume URL from URL parameter
+        // Get resume URL and optional method from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const resumeUrl = urlParams.get('url');
-        
-        // Display the resume URL
-        document.getElementById('url-display').textContent = 'Resume URL: ' + resumeUrl;
-        
+        const methodParam = (urlParams.get('method') || 'GET').toUpperCase();
+
+        // Display the resume URL and initialize method selector
+        document.getElementById('url-display').textContent = 'Resume URL: ' + (resumeUrl || '(missing)');
+        const methodSelect = document.getElementById('method');
+        if (methodParam === 'GET' || methodParam === 'POST') {
+            methodSelect.value = methodParam;
+        }
+
+        function showSendingDetails(method, url) {
+            const sendingDiv = document.getElementById('sending');
+            sendingDiv.innerHTML = '<div class="info">Sending ' + method + ' to: ' + url + '<br>Headers: (none)<br>Body: (none)</div>';
+        }
+
         async function resumeWorkflow() {
             const button = document.getElementById('resume-btn');
             const resultDiv = document.getElementById('result');
-            
+            const sendingDiv = document.getElementById('sending');
+            const method = document.getElementById('method').value;
+
+            resultDiv.innerHTML = '';
+            sendingDiv.innerHTML = '';
+
             if (!resumeUrl) {
                 resultDiv.innerHTML = '<div class="error">No resume URL provided</div>';
                 return;
             }
-            
+
             try {
                 button.textContent = 'Resuming...';
                 button.disabled = true;
-                
-                console.log('Sending POST to:', resumeUrl);
-                
-                const response = await fetch(resumeUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
+
+                // IMPORTANT: Do not set any headers or body → avoid CORS preflight
+                showSendingDetails(method, resumeUrl);
+                console.log('Sending', method, 'to:', resumeUrl);
+
+                const response = await fetch(resumeUrl, { method });
+
                 console.log('Response status:', response.status);
                 console.log('Response statusText:', response.statusText);
-                
+
                 if (response.ok) {
-                    resultDiv.innerHTML = '<div class="success">Workflow resumed successfully!</div>';
+                    resultDiv.innerHTML = '<div class="success">Workflow resumed successfully.</div>';
                 } else {
-                    resultDiv.innerHTML = '<div class="error">Failed to resume workflow: ' + response.status + ' ' + response.statusText + '</div>';
+                    resultDiv.innerHTML = '<div class="error">Failed: ' + response.status + ' ' + response.statusText + '</div>';
                 }
-                
+
             } catch (error) {
                 console.error('Error:', error);
                 resultDiv.innerHTML = '<div class="error">Error: ' + error.message + '</div>';
