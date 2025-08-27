@@ -71,6 +71,11 @@
                                 <i class="bi bi-play-fill me-2"></i>Resume Workflow
                             </button>
                         </div>
+                        <div class="mt-3">
+                            <button class="btn btn-warning btn-sm" onclick="showResumeButton()">
+                                <i class="bi bi-eye me-2"></i>Show Resume Button (Debug)
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,8 +139,22 @@
                         document.getElementById('dropdown-container').style.display = 'block';
                         
                         // Check if resumeUrl exists and show resume button
+                        console.log('Response data:', data);
                         if (data.$execution && data.$execution.resumeUrl) {
+                            console.log('Found resumeUrl:', data.$execution.resumeUrl);
                             document.getElementById('resume-container').style.display = 'block';
+                        } else {
+                            console.log('No resumeUrl found in data');
+                            // Also check for any key containing 'resumeUrl'
+                            const hasResumeUrl = Object.keys(data).some(key => 
+                                key.toLowerCase().includes('resumeurl') || 
+                                (typeof data[key] === 'object' && data[key] && 
+                                 Object.keys(data[key]).some(subKey => subKey.toLowerCase().includes('resumeurl')))
+                            );
+                            if (hasResumeUrl) {
+                                console.log('Found resumeUrl in nested data');
+                                document.getElementById('resume-container').style.display = 'block';
+                            }
                         }
                     } catch (jsonError) {
                         console.log('No JSON response data to display');
@@ -211,6 +230,11 @@
                 resumeButton.innerHTML = originalText;
                 resumeButton.disabled = false;
             }
+        }
+        
+        function showResumeButton() {
+            document.getElementById('resume-container').style.display = 'block';
+            console.log('Resume button manually shown');
         }
     </script>
 </body>
