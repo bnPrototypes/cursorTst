@@ -140,7 +140,14 @@
                         
                         // Check if resumeUrl exists and show resume button
                         console.log('Response data:', data);
-                        if (data.$execution && data.$execution.resumeUrl) {
+                        
+                        // Check for resumeURL in the response
+                        if (data.resumeURL) {
+                            console.log('Found resumeURL:', data.resumeURL);
+                            // Store the resume URL for later use
+                            window.storedResumeUrl = data.resumeURL;
+                            document.getElementById('resume-container').style.display = 'block';
+                        } else if (data.$execution && data.$execution.resumeUrl) {
                             console.log('Found resumeUrl:', data.$execution.resumeUrl);
                             document.getElementById('resume-container').style.display = 'block';
                         } else {
@@ -182,23 +189,23 @@
                 resumeButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Resuming...';
                 resumeButton.disabled = true;
                 
-                // Get the resumeUrl from the response data
-                const tableBody = document.getElementById('table-body');
-                let resumeUrl = null;
-                
-                // Find the resumeUrl in the table data
-                for (let row of tableBody.children) {
-                    const key = row.children[0].textContent;
-                    const value = row.children[1].textContent;
-                    if (key.includes('resumeUrl')) {
-                        resumeUrl = value;
-                        break;
-                    }
-                }
+                // Get the resumeUrl from stored data
+                let resumeUrl = window.storedResumeUrl;
                 
                 if (!resumeUrl) {
-                    throw new Error('Resume URL not found in response data');
+                    throw new Error('Resume URL not found. Please trigger the workflow first.');
                 }
+                
+                // Handle n8n template format: "{{$execution.resumeUrl}}"
+                if (resumeUrl.includes('{{$execution.resumeUrl}}')) {
+                    // Extract the actual URL from the n8n template
+                    // For now, we'll construct the URL based on the webhook URL pattern
+                    const webhookUrl = 'https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f';
+                    const baseUrl = webhookUrl.replace('/webhook-test/', '/webhook-resume/');
+                    resumeUrl = baseUrl;
+                }
+                
+
                 
                 // Make POST request to resume the workflow
                 const response = await fetch(resumeUrl, {
