@@ -67,6 +67,11 @@
                                 <i class="bi bi-play-fill me-2"></i>Senden
                             </a>
                         </div>
+                        <div id="reset-container" class="mt-3" style="display: none;">
+                            <button class="btn btn-outline-secondary" onclick="resetPage()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset Page
+                            </button>
+                        </div>
 
                     </div>
                 </div>
@@ -96,6 +101,7 @@
                 document.getElementById('dropdown-container').style.display = 'none';
                 document.getElementById('response-dropdown').innerHTML = '';
                 document.getElementById('resume-container').style.display = 'none';
+                document.getElementById('reset-container').style.display = 'none';
                 
                 // Hide the button and title
                 button.style.display = 'none';
@@ -161,6 +167,24 @@
                                 document.getElementById('resume-container').style.display = 'block';
                             }
                         }
+                        
+                        // Show reset button after successful response
+                        document.getElementById('reset-container').style.display = 'block';
+                            console.log('Found resumeUrl:', data.$execution.resumeUrl);
+                            document.getElementById('resume-container').style.display = 'block';
+                        } else {
+                            console.log('No resumeUrl found in data');
+                            // Also check for any key containing 'resumeUrl'
+                            const hasResumeUrl = Object.keys(data).some(key => 
+                                key.toLowerCase().includes('resumeurl') || 
+                                (typeof data[key] === 'object' && data[key] && 
+                                 Object.keys(data[key]).some(subKey => subKey.toLowerCase().includes('resumeurl')))
+                            );
+                            if (hasResumeUrl) {
+                                console.log('Found resumeUrl in nested data');
+                                document.getElementById('resume-container').style.display = 'block';
+                            }
+                        }
                     } catch (jsonError) {
                         console.log('No JSON response data to display');
                     }
@@ -172,9 +196,13 @@
                 const msgDiv = document.getElementById('msg');
                 msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Failed: ' + e.message + '</div>';
             } finally {
-                // Don't restore button state - keep it hidden
-                // button.innerHTML = originalText;
-                // button.disabled = false;
+                // Restore button state if there was an error
+                if (!r || !r.ok) {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.style.display = 'block';
+                    document.getElementById('title').style.display = 'block';
+                }
             }
         }
         
@@ -206,6 +234,24 @@
                 resumeLink.href = 'resume.html?url=' + encodeURIComponent(window.storedResumeUrl) + 
                                  '&data=' + encodeURIComponent(JSON.stringify(selectedData));
             }
+        }
+        
+        function resetPage() {
+            // Reset all elements to initial state
+            document.getElementById('title').style.display = 'block';
+            document.getElementById('webhookButton').style.display = 'block';
+            document.getElementById('webhookButton').innerHTML = '<i class="bi bi-play-circle me-2"></i>Trigger Workflow';
+            document.getElementById('webhookButton').disabled = false;
+            
+            // Hide all result containers
+            document.getElementById('table-container').style.display = 'none';
+            document.getElementById('dropdown-container').style.display = 'none';
+            document.getElementById('resume-container').style.display = 'none';
+            document.getElementById('reset-container').style.display = 'none';
+            document.getElementById('msg').innerHTML = '';
+            
+            // Clear stored data
+            window.storedResumeUrl = null;
         }
         
 
