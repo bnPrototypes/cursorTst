@@ -68,19 +68,6 @@
         <h1>N8N Trigger</h1>
         <button onclick="triggerWorkflow()" id="triggerButton">Trigger</button>
         <div id="result"></div>
-        <div id="table-container" style="display: none; margin-top: 20px;">
-            <h3>Response Data:</h3>
-            <table id="response-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <thead>
-                    <tr style="background-color: #f8f9fa;">
-                        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">Key</th>
-                        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">Value</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <script>
@@ -92,8 +79,6 @@
             button.innerHTML = 'Triggering...';
             button.disabled = true;
             resultDiv.style.display = 'none';
-            document.getElementById('table-container').style.display = 'none';
-            document.getElementById('table-body').innerHTML = '';
             
             try {
                 const response = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {
@@ -101,14 +86,22 @@
                 });
                 
                 if (response.ok) {
-                    showResult('Workflow triggered successfully!', 'success');
+                    showResult('Workflow triggered successfully! Redirecting...', 'success');
                     
-                    // Try to parse and display response data
+                    // Try to parse response data and redirect to resume3.html
                     try {
                         const data = await response.json();
-                        displayResponseData(data);
+                        // Store data in localStorage and redirect
+                        localStorage.setItem('n8nResponseData', JSON.stringify(data));
+                        setTimeout(() => {
+                            window.location.href = 'resume3.html';
+                        }, 1000);
                     } catch (jsonError) {
                         console.log('No JSON response data to display');
+                        // Still redirect even if no JSON data
+                        setTimeout(() => {
+                            window.location.href = 'resume3.html';
+                        }, 1000);
                     }
                 } else {
                     showResult('Error: ' + response.status + ' ' + response.statusText, 'error');
@@ -131,21 +124,7 @@
             resultDiv.style.display = 'block';
         }
         
-        function displayResponseData(data) {
-            const tableBody = document.getElementById('table-body');
-            
-            Object.entries(data).forEach(([key, value]) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td style="border: 1px solid #dee2e6; padding: 8px; font-weight: bold;">${key}</td>
-                    <td style="border: 1px solid #dee2e6; padding: 8px;">${typeof value === 'object' ? JSON.stringify(value) : value}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-            
-            // Show the table
-            document.getElementById('table-container').style.display = 'block';
-        }
+
     </script>
 </body>
 </html>
