@@ -92,6 +92,7 @@
             </table>
         </div>
         <div style="text-align: center;">
+            <button id="resume-button" onclick="resumeWorkflow()" class="back-button" style="margin-right: 10px;">Resume</button>
             <a href="index3.html" class="back-button">Back to Trigger</a>
         </div>
     </div>
@@ -104,11 +105,31 @@
             if (storedData) {
                 try {
                     const data = JSON.parse(storedData);
-                    displayResponseData(data);
+                    separateAndDisplayData(data);
                 } catch (error) {
                     console.error('Error parsing stored data:', error);
                     showNoDataMessage();
                 }
+            } else {
+                showNoDataMessage();
+            }
+        }
+        
+        function separateAndDisplayData(data) {
+            // Separate resumeURL from other data
+            const { resumeURL, ...otherData } = data;
+            
+            // Store resumeURL for later use
+            if (resumeURL) {
+                window.resumeURL = resumeURL;
+                document.getElementById('resume-button').style.display = 'inline-block';
+            } else {
+                document.getElementById('resume-button').style.display = 'none';
+            }
+            
+            // Display other data in table
+            if (Object.keys(otherData).length > 0) {
+                displayResponseData(otherData);
             } else {
                 showNoDataMessage();
             }
@@ -130,6 +151,45 @@
         function showNoDataMessage() {
             const tableBody = document.getElementById('table-body');
             tableBody.innerHTML = '<tr><td colspan="2" class="no-data">No response data available</td></tr>';
+        }
+        
+        async function resumeWorkflow() {
+            const button = document.getElementById('resume-button');
+            const originalText = button.textContent;
+            
+            if (!window.resumeURL) {
+                alert('No resume URL available');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                button.textContent = 'Resuming...';
+                button.disabled = true;
+                
+                console.log('Sending POST to resume URL:', window.resumeURL);
+                
+                // POST request without headers to avoid CORS preflight
+                const response = await fetch(window.resumeURL, {
+                    method: 'POST'
+                });
+                
+                console.log('Resume response status:', response.status);
+                
+                if (response.ok) {
+                    alert('Workflow resumed successfully!');
+                } else {
+                    alert('Failed to resume workflow: ' + response.status + ' ' + response.statusText);
+                }
+                
+            } catch (error) {
+                console.error('Resume error:', error);
+                alert('Error resuming workflow: ' + error.message);
+            } finally {
+                // Restore button state
+                button.textContent = originalText;
+                button.disabled = false;
+            }
         }
         
         // Load data when page loads
