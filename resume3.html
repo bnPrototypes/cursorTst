@@ -51,6 +51,7 @@
             display: flex;
             gap: 12px;
             margin-top: 20px;
+            justify-content: space-between;
         }
         
         .btn {
@@ -60,6 +61,7 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
+            text-align: center;
         }
         
         .btn-primary {
@@ -98,7 +100,7 @@
         </div>
         <div class="actions">
             <button id="resume-button" onclick="resumeWorkflow()" class="btn btn-primary">Resume</button>
-            <a href="index3.html" class="btn btn-light" style="text-align:center; line-height:22px;">Back to Trigger</a>
+            <a href="index3.html" class="btn btn-light">Back to Trigger</a>
         </div>
     </div>
 
@@ -142,6 +144,7 @@
                     const option = document.createElement('option');
                     option.value = typeof value === 'object' ? JSON.stringify(value) : String(value);
                     option.text = key + ': ' + (typeof value === 'object' ? JSON.stringify(value) : value);
+                    option.dataset.key = key;
                     dropdown.appendChild(option);
                 });
                 document.getElementById('no-data').style.display = 'none';
@@ -170,9 +173,23 @@
                 button.textContent = 'Resuming...';
                 button.disabled = true;
                 
+                // Prepare selected dropdown data
+                const dropdown = document.getElementById('response-dropdown');
+                const selectedOption = dropdown.options[dropdown.selectedIndex] || dropdown.options[0];
+                let bodyString = '';
+                if (selectedOption) {
+                    const payload = {
+                        key: selectedOption.dataset.key || '',
+                        value: selectedOption.value
+                    };
+                    // Send as plain text (string) to avoid CORS preflight
+                    bodyString = JSON.stringify(payload);
+                }
+                
                 // POST request without headers to avoid CORS preflight
                 const response = await fetch(window.resumeURL, {
-                    method: 'POST'
+                    method: 'POST',
+                    body: bodyString
                 });
                 
                 if (response.ok) {
