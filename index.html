@@ -3,260 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N8N Webhook Test</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Welcome - Modern Web Page</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            background: #808080;
         }
-        
+
         .container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: none;
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        main {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .social-links a:hover {
+            opacity: 0.7;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            main {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .counter-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .counter {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .counter-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card p-4">
-                    <div class="card-body text-center">
-                        <h2 class="card-title mb-4 text-primary" id="title">N8N Webhook Test</h2>
-                        <button class="btn btn-primary btn-lg" onclick="call()">
-                            <i class="bi bi-play-circle me-2"></i>Trigger Workflow
-                        </button>
+        <header>
+            <h1>Welcome to My Website</h1>
+            <p class="subtitle">A modern, responsive web experience</p>
+            <a href="#features" class="cta-button">Explore Features</a>
+        </header>
 
-                        <div id="msg" class="mt-3"></div>
-                        <div id="table-container" class="mt-3" style="display: none;">
-                            <h5 class="text-primary">Response Data:</h5>
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th>Key</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-body">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div id="dropdown-container" class="mt-3" style="display: none;">
-                            <h5 class="text-primary">Response Data (Dropdown):</h5>
-                            <div class="mb-3">
-                                <label for="response-dropdown" class="form-label">Select Response Data:</label>
-                                <select id="response-dropdown" class="form-select" size="8"></select>
-                            </div>
-                        </div>
-                        <div id="resume-container" class="mt-3" style="display: none;">
-                            <a href="#" id="resume-link" class="btn btn-success btn-lg">
-                                <i class="bi bi-play-fill me-2"></i>Senden
-                            </a>
-                        </div>
-                        <div id="reset-container" class="mt-3" style="display: none;">
-                            <button class="btn btn-outline-secondary" onclick="resetPage()">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Reset Page
-                            </button>
-                        </div>
-
-                    </div>
+        <main>
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">What We Offer</h2>
+            
+            <div class="features" id="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Fast Performance</h3>
+                    <p>Lightning-fast loading times and smooth interactions for the best user experience.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive Design</h3>
+                    <p>Perfect display on all devices - from mobile phones to desktop computers.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Modern UI</h3>
+                    <p>Beautiful, contemporary design with smooth animations and intuitive navigation.</p>
                 </div>
             </div>
-        </div>
+
+            <div class="counter-section">
+                <h3>Live Counter</h3>
+                <div class="counter" id="counter">0</div>
+                <p class="counter-label">Visitors today</p>
+                <button onclick="incrementCounter()" style="margin-top: 20px; padding: 10px 20px; border: none; border-radius: 25px; background: white; color: #667eea; cursor: pointer; font-weight: bold;">Click Me!</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 My Website. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📘</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="LinkedIn">💼</a>
+            </div>
+        </footer>
     </div>
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    
+
     <script>
-        async function call() {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            
-            try {
-                // Show loading state
-                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Triggering...';
-                button.disabled = true;
-                
-                // Hide table and clear previous data
-                document.getElementById('table-container').style.display = 'none';
-                document.getElementById('table-body').innerHTML = '';
-                document.getElementById('dropdown-container').style.display = 'none';
-                document.getElementById('response-dropdown').innerHTML = '';
-                document.getElementById('resume-container').style.display = 'none';
-                document.getElementById('reset-container').style.display = 'none';
-                
-                // Hide the button and title
-                button.style.display = 'none';
-                document.getElementById('title').style.display = 'none';
-                
-                let r = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {method:'POST'});
-                
-                if (r.ok) {
-                    // Parse and display response data in table and dropdown
-                    try {
-                        const data = await r.json();
-                        const tableBody = document.getElementById('table-body');
-                        const dropdown = document.getElementById('response-dropdown');
-                        
-                        Object.entries(data).forEach(([key, value]) => {
-                            // Add to table
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td><strong>${key}</strong></td>
-                                <td>${typeof value === 'object' ? JSON.stringify(value) : value}</td>
-                            `;
-                            tableBody.appendChild(row);
-                            
-                            // Add to dropdown
-                            const option = document.createElement('option');
-                            option.value = value;
-                            option.text = key + ': ' + (typeof value === 'object' ? JSON.stringify(value) : value);
-                            dropdown.appendChild(option);
-                        });
-                        
-                        // Show both table and dropdown
-                        document.getElementById('table-container').style.display = 'block';
-                        document.getElementById('dropdown-container').style.display = 'block';
-                        
-                        // Add event listener to dropdown to update resume link when selection changes
-                        const dropdown = document.getElementById('response-dropdown');
-                        dropdown.addEventListener('change', updateResumeLink);
-                        
-                        // Check if resumeUrl exists and show resume button
-                        console.log('Response data:', data);
-                        
-                        // Check for resumeURL in the response
-                        if (data.resumeURL) {
-                            console.log('Found resumeURL:', data.resumeURL);
-                            // Store the resume URL for later use
-                            window.storedResumeUrl = data.resumeURL;
-                            document.getElementById('resume-container').style.display = 'block';
-                            // Set up dynamic resume link that updates when dropdown selection changes
-                            updateResumeLink();
-                        } else if (data.$execution && data.$execution.resumeUrl) {
-                            console.log('Found resumeUrl:', data.$execution.resumeUrl);
-                            document.getElementById('resume-container').style.display = 'block';
-                        } else {
-                            console.log('No resumeUrl found in data');
-                            // Also check for any key containing 'resumeUrl'
-                            const hasResumeUrl = Object.keys(data).some(key => 
-                                key.toLowerCase().includes('resumeurl') || 
-                                (typeof data[key] === 'object' && data[key] && 
-                                 Object.keys(data[key]).some(subKey => subKey.toLowerCase().includes('resumeurl')))
-                            );
-                            if (hasResumeUrl) {
-                                console.log('Found resumeUrl in nested data');
-                                document.getElementById('resume-container').style.display = 'block';
-                            }
-                        }
-                        
-                        // Show reset button after successful response
-                        document.getElementById('reset-container').style.display = 'block';
-                            console.log('Found resumeUrl:', data.$execution.resumeUrl);
-                            document.getElementById('resume-container').style.display = 'block';
-                        } else {
-                            console.log('No resumeUrl found in data');
-                            // Also check for any key containing 'resumeUrl'
-                            const hasResumeUrl = Object.keys(data).some(key => 
-                                key.toLowerCase().includes('resumeurl') || 
-                                (typeof data[key] === 'object' && data[key] && 
-                                 Object.keys(data[key]).some(subKey => subKey.toLowerCase().includes('resumeurl')))
-                            );
-                            if (hasResumeUrl) {
-                                console.log('Found resumeUrl in nested data');
-                                document.getElementById('resume-container').style.display = 'block';
-                            }
-                        }
-                    } catch (jsonError) {
-                        console.log('No JSON response data to display');
-                    }
-                } else {
-                    const msgDiv = document.getElementById('msg');
-                    msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Error: ' + r.status + ' ' + r.statusText + '</div>';
-                }
-            } catch(e) {
-                const msgDiv = document.getElementById('msg');
-                msgDiv.innerHTML = '<div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-triangle me-2"></i>Failed: ' + e.message + '</div>';
-            } finally {
-                // Restore button state if there was an error
-                if (!r || !r.ok) {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                    button.style.display = 'block';
-                    document.getElementById('title').style.display = 'block';
-                }
-            }
-        }
-        
-        function getSelectedDropdownData() {
-            const dropdown = document.getElementById('response-dropdown');
-            const selectedOption = dropdown.options[dropdown.selectedIndex];
-            if (selectedOption) {
-                return {
-                    key: selectedOption.text.split(':')[0],
-                    value: selectedOption.value
-                };
-            }
-            // If no option is selected, return the first option
-            if (dropdown.options.length > 0) {
-                const firstOption = dropdown.options[0];
-                return {
-                    key: firstOption.text.split(':')[0],
-                    value: firstOption.value
-                };
-            }
-            return null;
-        }
-        
-        function updateResumeLink() {
-            if (window.storedResumeUrl) {
-                const resumeLink = document.getElementById('resume-link');
-                const selectedData = getSelectedDropdownData();
-                console.log('Updating resume link with selected data:', selectedData);
-                resumeLink.href = 'resume.html?url=' + encodeURIComponent(window.storedResumeUrl) + 
-                                 '&data=' + encodeURIComponent(JSON.stringify(selectedData));
-            }
-        }
-        
-        function resetPage() {
-            // Reset all elements to initial state
-            document.getElementById('title').style.display = 'block';
-            document.getElementById('webhookButton').style.display = 'block';
-            document.getElementById('webhookButton').innerHTML = '<i class="bi bi-play-circle me-2"></i>Trigger Workflow';
-            document.getElementById('webhookButton').disabled = false;
-            
-            // Hide all result containers
-            document.getElementById('table-container').style.display = 'none';
-            document.getElementById('dropdown-container').style.display = 'none';
-            document.getElementById('resume-container').style.display = 'none';
-            document.getElementById('reset-container').style.display = 'none';
-            document.getElementById('msg').innerHTML = '';
-            
-            // Clear stored data
-            window.storedResumeUrl = null;
-        }
-        
+        // Counter functionality
+        let count = 0;
+        const counterElement = document.getElementById('counter');
 
-        
+        function incrementCounter() {
+            count++;
+            counterElement.textContent = count;
+            
+            // Add a small animation effect
+            counterElement.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                counterElement.style.transform = 'scale(1)';
+            }, 200);
+        }
 
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to feature cards
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.background = '#e3f2fd';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.background = '#f8f9fa';
+                });
+            });
+
+            // Add a welcome message
+            setTimeout(() => {
+                alert('Welcome to our website! 🎉');
+            }, 1000);
+        });
     </script>
 </body>
 </html>
