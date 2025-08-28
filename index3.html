@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N8N Trigger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>N8N Trigger</h1>
+        <button onclick="triggerWorkflow()" id="triggerButton">Trigger</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function triggerWorkflow() {
+            const button = document.getElementById('triggerButton');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            button.innerHTML = 'Triggering...';
+            button.disabled = true;
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('https://n8n.bn-prototypes.de/webhook-test/89ce9ffd-4f16-4f59-9476-f42b8164685f', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    showResult('Workflow triggered successfully!', 'success');
+                } else {
+                    showResult('Error: ' + response.status + ' ' + response.statusText, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showResult('Failed to trigger workflow: ' + error.message, 'error');
+            } finally {
+                // Restore button state
+                button.innerHTML = 'Trigger';
+                button.disabled = false;
+            }
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = type;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
