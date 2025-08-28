@@ -24,76 +24,81 @@
         h1 {
             color: #333;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
-        .table-container {
-            margin-top: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .dropdown-container {
             margin-top: 10px;
         }
         
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
-            text-align: left;
-        }
-        
-        th {
-            background-color: #f8f9fa;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
             font-weight: bold;
         }
         
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+            font-size: 14px;
         }
         
-        .back-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .actions {
+            display: flex;
+            gap: 12px;
             margin-top: 20px;
-            text-decoration: none;
-            display: inline-block;
         }
         
-        .back-button:hover {
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
             background-color: #0056b3;
+        }
+        
+        .btn-light {
+            background-color: #e9ecef;
+            color: #333;
+        }
+        
+        .btn-light:hover {
+            background-color: #dde1e4;
         }
         
         .no-data {
             text-align: center;
             color: #666;
             font-style: italic;
-            padding: 20px;
+            padding: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>N8N Response Data</h1>
-        <div class="table-container">
-            <table id="response-table">
-                <thead>
-                    <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
+        <div class="dropdown-container">
+            <label for="response-dropdown">Response Data (without resumeURL)</label>
+            <select id="response-dropdown" size="8"></select>
+            <div id="no-data" class="no-data" style="display:none;">No response data available</div>
         </div>
-        <div style="text-align: center;">
-            <button id="resume-button" onclick="resumeWorkflow()" class="back-button" style="margin-right: 10px;">Resume</button>
-            <a href="index3.html" class="back-button">Back to Trigger</a>
+        <div class="actions">
+            <button id="resume-button" onclick="resumeWorkflow()" class="btn btn-primary">Resume</button>
+            <a href="index3.html" class="btn btn-light" style="text-align:center; line-height:22px;">Back to Trigger</a>
         </div>
     </div>
 
@@ -117,7 +122,7 @@
         
         function separateAndDisplayData(data) {
             // Separate resumeURL from other data
-            const { resumeURL, ...otherData } = data;
+            const { resumeURL, ...otherData } = data || {};
             
             // Store resumeURL for later use
             if (resumeURL) {
@@ -127,30 +132,28 @@
                 document.getElementById('resume-button').style.display = 'none';
             }
             
-            // Display other data in table
-            if (Object.keys(otherData).length > 0) {
-                displayResponseData(otherData);
+            // Display other data in dropdown
+            const dropdown = document.getElementById('response-dropdown');
+            dropdown.innerHTML = '';
+            const keys = Object.keys(otherData || {});
+            if (keys.length > 0) {
+                keys.forEach((key) => {
+                    const value = otherData[key];
+                    const option = document.createElement('option');
+                    option.value = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                    option.text = key + ': ' + (typeof value === 'object' ? JSON.stringify(value) : value);
+                    dropdown.appendChild(option);
+                });
+                document.getElementById('no-data').style.display = 'none';
             } else {
                 showNoDataMessage();
             }
         }
         
-        function displayResponseData(data) {
-            const tableBody = document.getElementById('table-body');
-            
-            Object.entries(data).forEach(([key, value]) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${key}</strong></td>
-                    <td>${typeof value === 'object' ? JSON.stringify(value) : value}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
         function showNoDataMessage() {
-            const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '<tr><td colspan="2" class="no-data">No response data available</td></tr>';
+            const dropdown = document.getElementById('response-dropdown');
+            dropdown.innerHTML = '';
+            document.getElementById('no-data').style.display = 'block';
         }
         
         async function resumeWorkflow() {
@@ -167,14 +170,10 @@
                 button.textContent = 'Resuming...';
                 button.disabled = true;
                 
-                console.log('Sending POST to resume URL:', window.resumeURL);
-                
                 // POST request without headers to avoid CORS preflight
                 const response = await fetch(window.resumeURL, {
                     method: 'POST'
                 });
-                
-                console.log('Resume response status:', response.status);
                 
                 if (response.ok) {
                     alert('Workflow resumed successfully!');
