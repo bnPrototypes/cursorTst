@@ -99,8 +99,8 @@
             <div id="no-data" class="no-data" style="display:none;">No response data available</div>
         </div>
         <div class="actions">
-            <button id="resume-button" onclick="resumeWorkflow()" class="btn btn-primary">Resume</button>
             <a href="index3.html" class="btn btn-light">Back to Trigger</a>
+            <button id="resume-button" onclick="resumeWorkflow()" class="btn btn-primary">Resume</button>
         </div>
     </div>
 
@@ -182,8 +182,8 @@
                         key: selectedOption.dataset.key || '',
                         value: selectedOption.value
                     };
-                    // Send as plain text (string) to avoid CORS preflight
-                    bodyString = JSON.stringify(payload);
+                    // Wrap inside a top-level 'body' field as requested
+                    bodyString = JSON.stringify({ body: payload });
                 }
                 
                 // POST request without headers to avoid CORS preflight
